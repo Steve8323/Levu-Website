@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fabrication — Levu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fff;--bg2:#f2faf4;--dark:#0a1a0d;
+  --accent:#1db954;--accent2:#0d8c3c;--accent3:#a8f0c0;
+  --muted:#4a7a58;--border:rgba(29,185,84,0.18);
+}
+html,body{height:100%;overflow:hidden;}
+#page{height:100vh;overflow-y:scroll;}
+.snap{height:100vh;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+
+/* Fade-in */
+.ri{opacity:0;transform:translateY(18px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);}
+.snap.entered .ri{opacity:1;transform:none;}
+[data-delay="1"]{transition-delay:.1s;}[data-delay="2"]{transition-delay:.2s;}
+[data-delay="3"]{transition-delay:.3s;}[data-delay="4"]{transition-delay:.4s;}
+[data-delay="5"]{transition-delay:.5s;}[data-delay="6"]{transition-delay:.6s;}
+
+/* Nav */
+nav{position:fixed;top:0;left:0;width:100%;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:box-shadow .3s;}
+nav.scrolled{box-shadow:0 2px 24px rgba(29,185,84,.08);}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark);text-decoration:none;letter-spacing:-.02em;}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.875rem;font-weight:500;transition:color .2s;padding-bottom:2px;border-bottom:2px solid transparent;}
+.nav-links a:hover{color:var(--dark);}
+.nav-links a.active{color:var(--accent2);border-bottom-color:var(--accent);}
+.nav-cta{padding:9px 22px;border-radius:40px;background:var(--accent);color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s,transform .15s;}
+.nav-cta:hover{background:var(--accent2);transform:scale(1.04);}
+
+/* Dots */
+#dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:300;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(29,185,84,.22);cursor:pointer;transition:background .3s,transform .3s;}
+.dot.active{background:var(--accent);transform:scale(1.6);}
+
+/* Shared type */
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.eyebrow{display:inline-block;margin-bottom:18px;padding:5px 16px;border-radius:40px;border:1px solid var(--border);background:rgba(29,185,84,.07);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);}
+.sec-label{font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;line-height:1.15;letter-spacing:-.025em;color:var(--dark);margin-bottom:12px;}
+.sec-body{font-size:.92rem;color:var(--muted);max-width:680px;line-height:1.8;}
+.inner{width:100%;max-width:1200px;padding:0 80px;}
+
+/* Scroll hint */
+.hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:.62rem;color:rgba(29,185,84,.4);letter-spacing:.14em;text-transform:uppercase;animation:pulse 2.2s ease-in-out infinite;white-space:nowrap;}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.8}}
+
+/* Card glow atom */
+.card-glow{position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,.07),transparent 70%);transition:transform .4s;}
+
+/* ── HERO ── */
+#f-hero{background:linear-gradient(160deg,#fff 0%,#edfaf3 60%,#d4f2e1 100%);flex-direction:column;text-align:center;}
+.hero-blob{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(29,185,84,.11),transparent 70%);}
+.hero-blob.b1{width:500px;height:500px;top:-150px;right:-100px;}
+.hero-blob.b2{width:300px;height:300px;bottom:-80px;left:-80px;}
+#f-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.4rem,5.5vw,4.2rem);font-weight:700;line-height:1.08;letter-spacing:-.03em;color:var(--dark);max-width:760px;margin-bottom:18px;}
+#f-hero p{font-size:1rem;color:var(--muted);max-width:560px;line-height:1.78;}
+
+/* ── PROCESS ── */
+.proc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px;}
+.proc-card{border:1.5px solid var(--border);border-radius:16px;padding:18px 18px;background:#fff;transition:border-color .3s,box-shadow .3s;}
+.proc-card:hover{border-color:rgba(29,185,84,.42);box-shadow:0 8px 28px rgba(29,185,84,.07);}
+.proc-num{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--accent3);line-height:1;margin-bottom:8px;}
+.proc-title{font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.proc-body{font-size:.78rem;color:var(--muted);line-height:1.7;}
+.proc-cost{display:inline-block;margin-top:7px;font-family:'Space Grotesk',sans-serif;font-size:.74rem;font-weight:700;color:var(--accent);}
+.proc-wip{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:20px;background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.3);font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);vertical-align:middle;}
+
+/* ── MATERIALS ── */
+#f-materials{background:var(--dark);}
+#f-materials .sec-label{color:var(--accent3);}
+#f-materials .sec-title{color:#fff;}
+#f-materials .sec-body{color:rgba(255,255,255,.52);}
+.mat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
+.mat-card{background:#0d2018;border:1.5px solid rgba(29,185,84,.18);border-radius:14px;padding:22px 20px;transition:border-color .3s;}
+.mat-card:hover{border-color:rgba(29,185,84,.38);}
+.mat-card h3{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;color:#fff;margin-bottom:7px;}
+.mat-card p{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.7;}
+
+/* ── STRATEGY ── */
+.strat-cols{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-top:26px;}
+.strat-text p{font-size:.88rem;color:var(--muted);line-height:1.82;margin-bottom:14px;}
+.strat-text p:last-child{margin-bottom:0;}
+.strat-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.strat-card{border:1.5px solid var(--border);border-radius:14px;padding:18px 16px;background:#fff;}
+.strat-card-title{font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;color:var(--dark);margin-bottom:5px;}
+.strat-card-body{font-size:.76rem;color:var(--muted);line-height:1.7;}
+
+/* ── CONTACT / FOOTER PAGE ── */
+#f-footer{flex-direction:column;align-items:stretch;justify-content:flex-start;background:var(--dark);}
+.ctc-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:80px 80px 20px;}
+.ctc-wrap{width:100%;max-width:1200px;margin:0 auto;}
+.ctc-eyebrow{display:inline-block;margin-bottom:14px;padding:4px 14px;border-radius:40px;border:1px solid rgba(29,185,84,.3);background:rgba(29,185,84,.08);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent3);}
+.ctc-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,3.5vw,2.9rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#fff;margin-bottom:10px;}
+.ctc-ac{color:var(--accent);}
+.ctc-sub{font-size:.9rem;color:rgba(255,255,255,.45);max-width:580px;line-height:1.78;margin-bottom:24px;}
+.ctc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.ctc-card{background:#0d2018;border:1.5px solid rgba(29,185,84,.18);border-radius:14px;padding:20px 18px;transition:border-color .3s;}
+.ctc-card:hover{border-color:rgba(29,185,84,.4);}
+.ctc-tag{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(29,185,84,.1);color:var(--accent3);}
+.ctc-card-title{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.ctc-card-body{font-size:.78rem;color:rgba(255,255,255,.47);line-height:1.7;}
+.ctc-email-link{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600;color:var(--accent);text-decoration:none;border-bottom:1.5px solid rgba(29,185,84,.3);padding-bottom:2px;transition:color .2s,border-color .2s;letter-spacing:-.01em;}
+.ctc-email-link:hover{color:#fff;border-color:rgba(255,255,255,.4);}
+.ctc-bar{padding:20px 80px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+.ctc-logo{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;}
+.ctc-logo span{color:var(--accent);}
+.ctc-nav{display:flex;gap:20px;}
+.ctc-nav a{font-size:.78rem;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s;}
+.ctc-nav a:hover{color:#fff;}
+.ctc-copy{font-size:.7rem;color:rgba(255,255,255,.18);}
+
+@media(max-width:960px){
+  nav{padding:0 20px;}.nav-links{display:none;}
+  .inner{padding:0 24px;}
+  .proc-grid{grid-template-columns:1fr 1fr;}
+  .mat-grid,.strat-cols{grid-template-columns:1fr;}
+  #dots{display:none;}
+  .ctc-inner{padding:60px 24px 16px;}
+  .ctc-grid{grid-template-columns:1fr;}
+  .ctc-bar{padding:16px 24px;}
+}
+@media(max-width:500px){.proc-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">Lev<span>u</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="architecture.html">Architecture</a></li>
+    <li><a href="fabrication.html" class="active">Fabrication</a></li>
+    <li><a href="research.html">Research</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="snapTo('f-footer');return false;">Get in Touch</a>
+</nav>
+<div id="dots"></div>
+<div id="page">
+
+  <!-- 1 HERO -->
+  <section class="snap" id="f-hero">
+    <div class="hero-blob b1"></div><div class="hero-blob b2"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;padding:0 40px;text-align:center;">
+      <span class="eyebrow ri">Vertical Integration</span>
+      <h1 class="ri" data-delay="1">Fabrication,<br/><span class="grad">Built From Scratch</span></h1>
+      <p class="ri" data-delay="2">Levu owns its entire fabrication stack — from the world's cheapest scalable photolithography system to in-house RF sputtering, reactive ion etching, and micromanipulation equipment.</p>
+    </div>
+    <div class="hint">↓ scroll</div>
+  </section>
+
+  <!-- 2 PROCESS -->
+  <section class="snap" id="f-process">
+    <div class="inner">
+      <div class="sec-label ri">Process Overview</div>
+      <h2 class="sec-title ri" data-delay="1">End-to-End, In-House</h2>
+      <p class="sec-body ri" data-delay="2">Every tool — from the photolithography system to the sputterer and etcher — is designed, assembled, and operated in-house to drive down cost and maximize iteration speed.</p>
+      <div class="proc-grid">
+        <div class="proc-card ri" data-delay="3">
+          <div class="proc-num">01</div>
+          <div class="proc-title">Chip Design</div>
+          <p class="proc-body">Inverse-designed AlN waveguide geometries and full GDS layout, optimized for target χ⁽²⁾ nonlinear coefficients and mode confinement.</p>
+        </div>
+        <div class="proc-card ri" data-delay="3">
+          <div class="proc-num">02</div>
+          <div class="proc-title">Photolithography</div>
+          <p class="proc-body">Pattern transfer using our custom-built photolithography system — the world's cheapest scalable apparatus, designed from scratch.</p>
+          <div><span class="proc-cost">Built for $200</span></div>
+        </div>
+        <div class="proc-card ri" data-delay="4">
+          <div class="proc-num">03</div>
+          <div class="proc-title">RF Sputtering</div>
+          <p class="proc-body">AlN thin-film deposition via our in-house RF sputtering machine, purpose-built for high-quality parametric film growth.</p>
+          <div><span class="proc-cost">Target: &lt;$2k</span><span class="proc-wip">In Dev</span></div>
+        </div>
+        <div class="proc-card ri" data-delay="4">
+          <div class="proc-num">04</div>
+          <div class="proc-title">Reactive Ion Etch</div>
+          <p class="proc-body">Cl₂-based ICP-RIE defines AlN waveguide sidewalls with smooth vertical profiles using the same RF plasma hardware as sputtering.</p>
+          <div><span class="proc-cost">Target: &lt;$2k</span><span class="proc-wip">In Dev</span></div>
+        </div>
+        <div class="proc-card ri" data-delay="5">
+          <div class="proc-num">05</div>
+          <div class="proc-title">Micromanipulation</div>
+          <p class="proc-body">Precision die handling, alignment, and fiber attachment using our custom-built micromanipulator for nanometer-scale positioning.</p>
+          <div><span class="proc-cost">Built for &lt;$100</span></div>
+        </div>
+        <div class="proc-card ri" data-delay="5">
+          <div class="proc-num">06</div>
+          <div class="proc-title">Test &amp; Package</div>
+          <p class="proc-body">Optical probe station tests each die for insertion loss and nonlinear response. Passing chips are fiber-array packaged for system integration.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 MATERIALS -->
+  <section class="snap" id="f-materials">
+    <div class="inner">
+      <div class="sec-label ri">Materials</div>
+      <h2 class="sec-title ri" data-delay="1">Aluminum Nitride Platform</h2>
+      <p class="sec-body ri" data-delay="2">AlN delivers strong χ⁽²⁾ nonlinearity, UV-to-mid-IR transparency, negligible absorption, and direct CMOS compatibility — all in one material that works seamlessly with our in-house processes.</p>
+      <div class="mat-grid">
+        <div class="mat-card ri" data-delay="3">
+          <h3>Strong χ⁽²⁾</h3>
+          <p>Second-order nonlinearity for SHG, OPA, and parametric amplification — the foundation of all-optical compute.</p>
+        </div>
+        <div class="mat-card ri" data-delay="3">
+          <h3>Wide Transparency</h3>
+          <p>UV to mid-IR window — the widest of any CMOS-compatible photonic platform available today.</p>
+        </div>
+        <div class="mat-card ri" data-delay="4">
+          <h3>Low Loss</h3>
+          <p>Built-in electromechanical tuning with no added layers, minimal absorption, and low propagation loss.</p>
+        </div>
+        <div class="mat-card ri" data-delay="4">
+          <h3>CMOS Compatible</h3>
+          <p>Direct integration with standard foundry tooling and processes — AlN slots into existing fab infrastructure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 STRATEGY -->
+  <section class="snap" id="f-strategy">
+    <div class="inner">
+      <div class="sec-label ri">Strategy</div>
+      <h2 class="sec-title ri" data-delay="1">Why Vertical Integration</h2>
+      <div class="strat-cols">
+        <div class="strat-text ri" data-delay="2">
+          <p>Most photonic startups are entirely dependent on external foundries — paying premium shuttle costs, waiting months for tapeouts, and accepting process constraints set by someone else's PDK.</p>
+          <p>By constructing our own scalable photolithography system ($200), RF sputterer and RIE chamber (&lt;$2k combined), and micromanipulator (&lt;$100) from scratch, we compress the design-fabricate-test loop from months to days.</p>
+          <p>Every process parameter is ours to tune. Every cost is ours to cut.</p>
+        </div>
+        <div class="ri" data-delay="3">
+          <div class="strat-cards">
+            <div class="strat-card">
+              <div class="strat-card-title">Photolithography</div>
+              <p class="strat-card-body">World's cheapest scalable system — built for $200</p>
+            </div>
+            <div class="strat-card">
+              <div class="strat-card-title">RF Sputtering</div>
+              <p class="strat-card-body">Custom AlN deposition machine — target &lt;$2k</p>
+            </div>
+            <div class="strat-card">
+              <div class="strat-card-title">Reactive Ion Etch</div>
+              <p class="strat-card-body">Cl₂-based ICP-RIE for waveguides — target &lt;$2k</p>
+            </div>
+            <div class="strat-card">
+              <div class="strat-card-title">Micromanipulator</div>
+              <p class="strat-card-body">nm-precision die handling — built for &lt;$100</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 FOOTER / CONTACT -->
+  <section class="snap" id="f-footer">
+    <div class="ctc-inner">
+      <div class="ctc-wrap">
+        <div class="ri"><span class="ctc-eyebrow">Get in Touch</span></div>
+        <h2 class="ctc-h ri" data-delay="1">Let's build something<br/><span class="ctc-ac">that matters.</span></h2>
+        <p class="ctc-sub ri" data-delay="2">Whether you're an investor, looking to join the team, or just curious about the technology — we'd love to hear from you.</p>
+        <div class="ctc-grid ri" data-delay="3">
+          <div class="ctc-card">
+            <div class="ctc-tag">Investors</div>
+            <div class="ctc-card-title">Back the Vision</div>
+            <p class="ctc-card-body">All-optical computing is the next paradigm shift in AI hardware. If you see the potential, let's talk about what we're building.</p>
+          </div>
+          <div class="ctc-card">
+            <div class="ctc-tag">Careers</div>
+            <div class="ctc-card-title">Join the Team</div>
+            <p class="ctc-card-body">We're looking for motivated engineers, physicists, and builders ready to work on the hardest problems in photonics.</p>
+          </div>
+          <div class="ctc-card">
+            <div class="ctc-tag">Explore</div>
+            <div class="ctc-card-title">Learn the Physics</div>
+            <p class="ctc-card-body">Curious about how optical neural networks actually work? We love explaining the physics. No question is too simple.</p>
+          </div>
+        </div>
+        <div class="ri" data-delay="4">
+          <a href="mailto:contact.levu@proton.me" class="ctc-email-link">contact.levu@proton.me</a>
+        </div>
+      </div>
+    </div>
+    <div class="ctc-bar ri" data-delay="5">
+      <div class="ctc-logo">Lev<span>u</span></div>
+      <div class="ctc-nav">
+        <a href="index.html">Home</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="fabrication.html">Fabrication</a>
+        <a href="research.html">Research</a>
+      </div>
+      <div class="ctc-copy">&copy; 2026 Levu. All rights reserved.</div>
+    </div>
+  </section>
+
+</div>
+<script>
+(function(){
+var PAGES=['f-hero','f-process','f-materials','f-strategy','f-footer'];
+var page=document.getElementById('page');
+var cur=0,busy=false;
+var dotsEl=document.getElementById('dots');
+PAGES.forEach(function(id){
+  var d=document.createElement('div');d.className='dot';d.setAttribute('data-id',id);
+  d.addEventListener('click',function(){gotoIdx(PAGES.indexOf(id));});dotsEl.appendChild(d);
+});
+function updateDots(id){document.querySelectorAll('.dot').forEach(function(d){d.classList.toggle('active',d.getAttribute('data-id')===id);});}
+function gotoIdx(idx){
+  if(idx<0||idx>=PAGES.length)return;
+  var prev=cur;cur=idx;
+  document.getElementById(PAGES[prev]).classList.remove('entered');
+  var el=document.getElementById(PAGES[idx]);
+  page.scrollTo({top:el.offsetTop,behavior:'smooth'});
+  setTimeout(function(){el.classList.add('entered');},40);
+  updateDots(PAGES[idx]);
+  busy=true;setTimeout(function(){busy=false;},900);
+}
+window.snapTo=function(id){gotoIdx(PAGES.indexOf(id));};
+document.getElementById(PAGES[0]).classList.add('entered');updateDots(PAGES[0]);
+var st;
+page.addEventListener('scroll',function(){
+  document.getElementById('navbar').classList.toggle('scrolled',page.scrollTop>10);
+  clearTimeout(st);st=setTimeout(function(){
+    if(busy)return;
+    var s=page.scrollTop,best=0,bd=Infinity;
+    PAGES.forEach(function(id,i){var d=Math.abs(document.getElementById(id).offsetTop-s);if(d<bd){bd=d;best=i;}});
+    if(bd>8){gotoIdx(best);}else{cur=best;updateDots(PAGES[cur]);}
+  },120);
+},{passive:true});
+function nav(dir){if(!busy)gotoIdx(cur+dir);}
+page.addEventListener('wheel',function(e){e.preventDefault();if(Math.abs(e.deltaY)<8)return;nav(e.deltaY>0?1:-1);},{passive:false});
+var ty=0;
+page.addEventListener('touchstart',function(e){ty=e.touches[0].clientY;},{passive:true});
+page.addEventListener('touchend',function(e){var dy=ty-e.changedTouches[0].clientY;if(Math.abs(dy)<40)return;nav(dy>0?1:-1);},{passive:false});
+document.addEventListener('keydown',function(e){if(!/Arrow(Down|Up)|Page(Down|Up)/.test(e.key))return;e.preventDefault();nav((e.key==='ArrowDown'||e.key==='PageDown')?1:-1);});
+}());
+</script>
+</body>
+</html>

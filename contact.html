@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Get in Touch — Levu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fff;--bg2:#f2faf4;--bg3:#e6f5ea;
+  --dark:#0a1a0d;--accent:#1db954;--accent2:#0d8c3c;--accent3:#a8f0c0;
+  --muted:#4a7a58;--border:rgba(29,185,84,0.18);
+}
+html,body{height:100%;background:var(--bg);color:var(--dark);font-family:'Inter',sans-serif;}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;height:64px;
+  background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark);text-decoration:none;letter-spacing:-0.02em;}
+.nav-logo span{color:var(--accent);}
+.nav-pages{display:flex;gap:32px;list-style:none;}
+.nav-pages a{color:var(--muted);text-decoration:none;font-size:0.875rem;font-weight:500;transition:color 0.2s;padding-bottom:2px;border-bottom:2px solid transparent;}
+.nav-pages a:hover{color:var(--dark);}
+.nav-pages a.active{color:var(--accent2);border-bottom-color:var(--accent);}
+.nav-cta{padding:9px 22px;border-radius:40px;background:var(--accent);color:#fff;font-size:0.85rem;font-weight:600;text-decoration:none;transition:background 0.2s,transform 0.15s;}
+.nav-cta:hover{background:var(--accent2);transform:scale(1.04);}
+
+/* ─── PAGE LAYOUT ─── */
+.page-wrap{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:100px 40px 60px;
+  background:linear-gradient(160deg,#fff 0%,#edfaf3 55%,#cff0e0 100%);
+  position:relative;overflow:hidden;
+}
+.hero-bg{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(29,185,84,.10),transparent 70%);}
+.hero-bg.c1{width:700px;height:700px;top:-200px;right:-200px;}
+.hero-bg.c2{width:500px;height:500px;bottom:-120px;left:-160px;}
+
+/* ─── CARD ─── */
+.contact-card{
+  position:relative;z-index:1;
+  width:100%;max-width:560px;
+  background:rgba(255,255,255,0.82);
+  backdrop-filter:blur(28px);
+  border:1.5px solid var(--border);
+  border-radius:28px;
+  padding:54px 52px 48px;
+  box-shadow:0 24px 80px rgba(29,185,84,.09);
+  animation:fadeUp .7s ease .1s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+.eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;color:var(--dark);margin-bottom:10px;}
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.card-sub{font-size:.93rem;color:var(--muted);line-height:1.75;margin-bottom:38px;}
+
+/* ─── FORM ─── */
+.form-group{margin-bottom:22px;}
+label{display:block;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+
+/* shared input/select/textarea base */
+input[type="text"],
+select,
+textarea{
+  width:100%;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  padding:13px 16px;
+  font-family:'Inter',sans-serif;
+  font-size:.93rem;
+  color:var(--dark);
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  -webkit-appearance:none;
+  appearance:none;
+}
+input[type="text"]::placeholder,textarea::placeholder{color:rgba(74,122,88,.4);}
+input[type="text"]:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(29,185,84,.12);
+}
+
+/* dropdown wrapper for custom arrow */
+.select-wrap{position:relative;}
+.select-wrap::after{
+  content:'';
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:6px solid var(--accent);
+  pointer-events:none;
+  transition:transform .2s;
+}
+select{
+  cursor:pointer;
+  padding-right:44px;
+  background:
+    url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>") /* no bg image, arrow from ::after */
+    #fff;
+  color:var(--dark);
+}
+select option{color:var(--dark);background:#fff;}
+select:invalid,select.placeholder{color:rgba(74,122,88,.4);}
+
+textarea{resize:none;height:130px;line-height:1.65;}
+
+/* ─── SUBMIT BUTTON ─── */
+.btn-submit{
+  width:100%;
+  padding:15px 30px;
+  border-radius:40px;
+  background:var(--accent);
+  color:#fff;
+  font-family:'Inter',sans-serif;
+  font-weight:700;
+  font-size:.93rem;
+  border:none;
+  cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 18px rgba(29,185,84,.30);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  letter-spacing:.01em;
+  margin-top:8px;
+}
+.btn-submit:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(29,185,84,.30);}
+.btn-submit:active{transform:translateY(0);}
+.btn-submit svg{transition:transform .2s;}
+.btn-submit:hover svg{transform:translateX(3px);}
+
+/* ─── STATES ─── */
+#status-msg{
+  font-size:.84rem;
+  font-weight:500;
+  text-align:center;
+  margin-top:14px;
+  min-height:20px;
+  color:var(--accent2);
+  transition:opacity .3s;
+}
+#status-msg.error{color:#e05555;}
+
+/* sending spinner */
+.spinner{
+  display:none;
+  width:16px;height:16px;
+  border:2.5px solid rgba(255,255,255,.35);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn-submit.loading .btn-text{opacity:0.6;}
+.btn-submit.loading .spinner{display:block;}
+
+/* ─── SUCCESS ─── */
+.success-view{
+  display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:20px 0 8px;
+  animation:fadeUp .5s ease both;
+}
+.success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--bg3);border:2px solid rgba(29,185,84,.35);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1) .1s both;
+}
+@keyframes popIn{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.success-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.success-body{font-size:.9rem;color:var(--muted);line-height:1.75;max-width:340px;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:640px){
+  nav{padding:0 20px;}.nav-pages{display:none;}
+  .contact-card{padding:36px 26px 34px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Lev<span>u</span></a>
+  <ul class="nav-pages">
+    <li><a href="index.html">Levu</a></li>
+    <li><a href="architecture.html">Architecture</a></li>
+    <li><a href="fabrication.html">Fabrication</a></li>
+    <li><a href="research.html">Research</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta active" style="background:var(--accent2);">Get in Touch</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="hero-bg c1"></div>
+  <div class="hero-bg c2"></div>
+
+  <div class="contact-card" id="card">
+
+    <!-- FORM VIEW -->
+    <div id="form-view">
+      <div class="eyebrow">Contact</div>
+      <h1 class="card-title">Let's <span class="grad">talk light.</span></h1>
+      <p class="card-sub">Tell us who you are and what's on your mind — we read every message.</p>
+
+      <div class="form-group">
+        <label for="inp-name">Name</label>
+        <input type="text" id="inp-name" placeholder="Your name" autocomplete="name"/>
+      </div>
+
+      <div class="form-group">
+        <label for="inp-email">Email</label>
+        <input type="text" id="inp-email" placeholder="your@email.com" autocomplete="email"/>
+      </div>
+
+      <div class="form-group">
+        <label for="inp-reason">I'm reaching out because…</label>
+        <div class="select-wrap">
+          <select id="inp-reason">
+            <option value="" disabled selected>Choose a reason</option>
+            <option value="invest">Looking to invest</option>
+            <option value="job">Looking for a job</option>
+            <option value="learn">Looking to learn</option>
+            <option value="partner">Looking to partner</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="inp-message">Message</label>
+        <textarea id="inp-message" placeholder="What would you like to say?"></textarea>
+      </div>
+
+      <button class="btn-submit" id="send-btn" onclick="sendMessage()">
+        <span class="btn-text">Send Message</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="arrow">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="spinner"></div>
+      </button>
+      <div id="status-msg"></div>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div class="success-view" id="success-view">
+      <div class="success-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M6 14l5.5 5.5L22 9" stroke="#1db954" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-title">Message sent.</div>
+      <p class="success-body">Thanks for reaching out. We'll get back to you as soon as we can.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var SUBJECT_MAP = {
+  invest:  'Investment Inquiry — Levu',
+  job:     'Job Application — Levu',
+  learn:   'Learning Inquiry — Levu',
+  partner: 'Partnership Inquiry — Levu'
+};
+
+function setStatus(msg, isError){
+  var el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = isError ? 'error' : '';
+}
+
+function sendMessage(){
+  var name    = document.getElementById('inp-name').value.trim();
+  var email   = document.getElementById('inp-email').value.trim();
+  var reason  = document.getElementById('inp-reason').value;
+  var message = document.getElementById('inp-message').value.trim();
+  var btn     = document.getElementById('send-btn');
+
+  // ── validation ──
+  if(!name)    { setStatus('Please enter your name.', true);    document.getElementById('inp-name').focus();    return; }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setStatus('Please enter a valid email address.', true); document.getElementById('inp-email').focus(); return; }
+  if(!reason)  { setStatus('Please choose a reason.', true);   document.getElementById('inp-reason').focus();  return; }
+  if(!message) { setStatus('Please write a message.', true);   document.getElementById('inp-message').focus(); return; }
+
+  setStatus('');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  var subject = SUBJECT_MAP[reason] || 'Message — Levu';
+
+  fetch('https://formspree.io/f/xzdjpagr', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      reason: document.getElementById('inp-reason').options[document.getElementById('inp-reason').selectedIndex].text,
+      message: message,
+      _subject: subject
+    })
+  })
+  .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+  .then(function(result){
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    if(result.ok){
+      document.getElementById('form-view').style.display = 'none';
+      var sv = document.getElementById('success-view');
+      sv.style.display = 'flex';
+      sv.style.animation = 'none';
+      sv.offsetHeight;
+      sv.style.animation = '';
+    } else {
+      setStatus(result.data.error || 'Something went wrong. Please try again.', true);
+    }
+  })
+  .catch(function(){
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    setStatus('Network error. Please try again.', true);
+  });
+}
+
+// Allow Enter in name field to jump to dropdown
+document.getElementById('inp-name').addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('inp-reason').focus(); }
+});
+</script>
+</body>
+</html>

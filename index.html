@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Levu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fff;--bg2:#f2faf4;--dark:#0a1a0d;
+  --accent:#1db954;--accent2:#0d8c3c;--accent3:#a8f0c0;
+  --muted:#4a7a58;--border:rgba(29,185,84,0.18);
+}
+html,body{height:100%;overflow:hidden;}
+#page{
+  height:100vh;overflow-y:scroll;
+  /* No CSS snap — all page navigation is handled by JS for consistency */
+  background:var(--bg);color:var(--dark);font-family:'Inter',sans-serif;
+}
+.snap{
+  height:100vh;overflow:hidden;position:relative;
+}
+
+/* ── FADE-IN SYSTEM ──
+   .snap.entered fires when the section snaps into view.
+   Children with .ri (reveal-item) animate in, staggered via data-delay. */
+.ri{
+  opacity:0;transform:translateY(20px);
+  transition:opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1);
+}
+.snap.entered .ri{opacity:1;transform:none;}
+[data-delay="1"]{transition-delay:.1s;}
+[data-delay="2"]{transition-delay:.2s;}
+[data-delay="3"]{transition-delay:.3s;}
+[data-delay="4"]{transition-delay:.4s;}
+[data-delay="5"]{transition-delay:.5s;}
+[data-delay="6"]{transition-delay:.6s;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;width:100%;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;height:64px;
+  background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 2px 24px rgba(29,185,84,0.08);}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark);text-decoration:none;letter-spacing:-0.02em;}
+.nav-logo span{color:var(--accent);}
+.nav-pages{display:flex;gap:32px;list-style:none;}
+.nav-pages a{color:var(--muted);text-decoration:none;font-size:.875rem;font-weight:500;transition:color .2s;padding-bottom:2px;border-bottom:2px solid transparent;}
+.nav-pages a:hover{color:var(--dark);}
+.nav-pages a.active{color:var(--accent2);border-bottom-color:var(--accent);}
+.nav-cta{padding:9px 22px;border-radius:40px;background:var(--accent);color:#fff;font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s,transform .15s;}
+.nav-cta:hover{background:var(--accent2);transform:scale(1.04);}
+
+/* ── SHARED ── */
+.grad{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.btn-p{display:inline-block;padding:13px 30px;border-radius:40px;background:var(--accent);color:#fff;font-weight:700;font-size:.9rem;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 18px rgba(29,185,84,.28);}
+.btn-p:hover{background:var(--accent2);transform:translateY(-2px);}
+.btn-g{display:inline-block;padding:13px 30px;border-radius:40px;background:transparent;color:var(--dark);font-weight:600;font-size:.9rem;text-decoration:none;border:1.5px solid rgba(29,185,84,.32);transition:border-color .2s,transform .15s;}
+.btn-g:hover{border-color:var(--accent);transform:translateY(-2px);}
+.sl{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px;}
+.st{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:700;line-height:1.15;letter-spacing:-.025em;color:var(--dark);margin-bottom:16px;}
+.sb{font-size:.97rem;color:var(--muted);max-width:660px;line-height:1.85;}
+
+/* ── HERO ── */
+#hero{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:80px 40px 60px;
+  background:linear-gradient(160deg,#fff 0%,#edfaf3 55%,#cff0e0 100%);
+}
+.hero-bg{position:absolute;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(29,185,84,.12),transparent 70%);}
+.hero-bg.c1{width:720px;height:720px;top:-220px;right:-180px;animation:float1 9s ease-in-out infinite;}
+.hero-bg.c2{width:520px;height:520px;bottom:-120px;left:-160px;animation:float2 11s ease-in-out infinite;}
+@keyframes float1{0%,100%{transform:translate(0,0);}50%{transform:translate(-28px,18px);}}
+@keyframes float2{0%,100%{transform:translate(0,0);}50%{transform:translate(18px,-22px);}}
+.eyebrow-tag{display:inline-block;margin-bottom:22px;padding:5px 16px;border-radius:40px;border:1px solid var(--border);background:rgba(29,185,84,.07);font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);}
+#hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.8rem,7vw,5.6rem);font-weight:700;line-height:1.08;letter-spacing:-.03em;color:var(--dark);max-width:900px;margin-bottom:24px;}
+#hero .sub{font-size:1.05rem;color:var(--muted);max-width:540px;margin-bottom:36px;line-height:1.78;}
+#hero .btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* Stats strip pinned to bottom of hero */
+.hero-stats{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;justify-content:center;gap:0;
+  background:var(--dark);padding:16px 40px;
+}
+.hs-item{
+  flex:1;max-width:220px;text-align:center;padding:0 24px;
+  border-right:1px solid rgba(255,255,255,.07);
+}
+.hs-item:last-child{border-right:none;}
+.hs-num{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:700;color:var(--accent);letter-spacing:-.03em;line-height:1;}
+.hs-label{font-size:.62rem;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;}
+
+.scroll-hint{
+  position:absolute;bottom:66px;left:50%;transform:translateX(-50%);
+  font-size:.68rem;color:rgba(29,185,84,.45);letter-spacing:.14em;text-transform:uppercase;
+  animation:pulse 2.2s ease-in-out infinite;white-space:nowrap;
+}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:.8}}
+
+/* ── COMPUTE ── */
+#cs-panel{
+  height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 80px 40px;background:#fff;border-top:1px solid var(--border);overflow:hidden;
+}
+.cs-ey{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;}
+#cs-panel h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.2rem,2.5vw,1.8rem);font-weight:700;letter-spacing:-.03em;color:var(--dark);line-height:1.1;margin-bottom:8px;text-align:center;}
+#sp-wrap{display:flex;align-items:baseline;gap:10px;margin-bottom:32px;}
+#sp-num{font-family:'Space Grotesk',sans-serif;font-size:2.2rem;font-weight:700;color:var(--accent);letter-spacing:-.04em;transition:all .35s cubic-bezier(.22,1,.36,1);}
+#sp-lab{font-size:.82rem;color:var(--muted);}
+#cs-leg{display:flex;gap:22px;margin-bottom:18px;flex-wrap:wrap;justify-content:center;}
+.leg{display:flex;align-items:center;gap:6px;}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+.leg-txt{font-size:.68rem;color:var(--muted);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+#bar-outer{width:100%;max-width:860px;margin-bottom:6px;}
+#cs-bar{display:inline-flex;align-items:stretch;height:18px;border-radius:9px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);}
+.bs{height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-right:1px solid rgba(255,255,255,.28);transition:width .4s cubic-bezier(.22,1,.36,1),opacity .3s;}
+.bs:last-child{border-right:none;}
+.bs-lbl{font-size:.38rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;padding:0 4px;transition:opacity .15s;}
+#cs-pct{display:inline-flex;width:100%;max-width:860px;margin-bottom:28px;}
+.pc{flex-shrink:0;text-align:center;overflow:hidden;transition:width .4s cubic-bezier(.22,1,.36,1);}
+.pc span{font-size:.58rem;font-family:'Space Grotesk',sans-serif;color:#a8c8b4;}
+#cs-explain{width:100%;max-width:860px;min-height:100px;display:flex;gap:14px;align-items:flex-start;}
+#ex-bar{width:3px;border-radius:3px;align-self:stretch;flex-shrink:0;min-height:80px;transition:background .3s;}
+#ex-phase{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;transition:color .2s;}
+#ex-title{font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;color:var(--dark);margin-bottom:6px;line-height:1.25;transition:opacity .18s;}
+#ex-body{font-size:.78rem;color:var(--muted);line-height:1.78;max-width:720px;transition:opacity .18s;}
+#cs-steps{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(29,185,84,.35);margin-top:18px;}
+#cs-prog{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .35s ease;}
+
+/* ── WHAT WE BUILD ── */
+#build{display:flex;align-items:center;justify-content:center;padding:0 80px;background:#fff;}
+.build-inner{max-width:1200px;width:100%;}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px;}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:18px;padding:34px 28px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;}
+.card:hover{transform:translateY(-6px);box-shadow:0 16px 48px rgba(29,185,84,.10);border-color:rgba(29,185,84,.42);}
+.card-glow{position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(29,185,84,.09),transparent 70%);transition:transform .4s;}
+.card:hover .card-glow{transform:scale(1.6);}
+.cn{font-family:'Space Grotesk',sans-serif;font-size:2.2rem;font-weight:700;color:var(--accent3);letter-spacing:-.04em;margin-bottom:8px;line-height:1;}
+.ct{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600;color:var(--dark);margin-bottom:10px;}
+.cb{font-size:.88rem;color:var(--muted);line-height:1.8;}
+
+/* ── WHY LEVU ── */
+#why{display:flex;align-items:center;justify-content:center;padding:0 80px;background:var(--bg2);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;max-width:1200px;width:100%;}
+.two-col p{font-size:.95rem;color:var(--muted);line-height:1.85;margin-bottom:14px;}
+.mini-cg{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mini-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:22px 18px;transition:transform .3s,box-shadow .3s;}
+.mini-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(29,185,84,.08);}
+.mini-card .ct{font-size:.9rem;margin-bottom:6px;}
+.mini-card .cb{font-size:.82rem;}
+
+/* ── CONTACT / FOOTER PAGE ── */
+#footer-sec{display:flex;flex-direction:column;align-items:stretch;background:var(--dark);}
+.ctc-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:80px 80px 20px;}
+.ctc-wrap{width:100%;max-width:1200px;margin:0 auto;}
+.ctc-eyebrow{display:inline-block;margin-bottom:14px;padding:4px 14px;border-radius:40px;border:1px solid rgba(29,185,84,.3);background:rgba(29,185,84,.08);font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent3);}
+.ctc-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,3.5vw,2.9rem);font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#fff;margin-bottom:10px;}
+.ctc-ac{color:var(--accent);}
+.ctc-sub{font-size:.9rem;color:rgba(255,255,255,.45);max-width:580px;line-height:1.78;margin-bottom:24px;}
+.ctc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.ctc-card{background:#0d2018;border:1.5px solid rgba(29,185,84,.18);border-radius:14px;padding:20px 18px;transition:border-color .3s;}
+.ctc-card:hover{border-color:rgba(29,185,84,.4);}
+.ctc-tag{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:20px;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(29,185,84,.1);color:var(--accent3);}
+.ctc-card-title{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;color:#fff;margin-bottom:6px;}
+.ctc-card-body{font-size:.78rem;color:rgba(255,255,255,.47);line-height:1.7;}
+.ctc-email-link{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:600;color:var(--accent);text-decoration:none;border-bottom:1.5px solid rgba(29,185,84,.3);padding-bottom:2px;transition:color .2s,border-color .2s;letter-spacing:-.01em;}
+.ctc-email-link:hover{color:#fff;border-color:rgba(255,255,255,.4);}
+.ctc-bar{padding:20px 80px;border-top:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+.ctc-logo{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;}
+.ctc-logo span{color:var(--accent);}
+.ctc-nav{display:flex;gap:20px;}
+.ctc-nav a{font-size:.78rem;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s;}
+.ctc-nav a:hover{color:#fff;}
+.ctc-copy{font-size:.7rem;color:rgba(255,255,255,.18);}
+
+/* ── DOTS ── */
+#dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:300;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(29,185,84,.22);cursor:pointer;transition:background .3s,transform .3s;}
+.dot.active{background:var(--accent);transform:scale(1.6);}
+
+@media(max-width:960px){
+  nav{padding:0 20px;}.nav-pages{display:none;}
+  .cg,.two-col{grid-template-columns:1fr;}
+  #build,#why{padding:0 24px;}
+  .ctc-inner{padding:60px 24px 16px;}
+  .ctc-grid{grid-template-columns:1fr;}
+  .ctc-bar{padding:16px 24px;}
+  #cs-panel{padding:40px 20px 24px;}
+  .hero-stats{padding:12px 20px;}
+  .hs-item{padding:0 12px;}
+  #dots{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo" onclick="snapTo('hero');return false;">Lev<span>u</span></a>
+  <ul class="nav-pages">
+    <li><a href="#" class="active">Levu</a></li>
+    <li><a href="architecture.html">Architecture</a></li>
+    <li><a href="fabrication.html">Fabrication</a></li>
+    <li><a href="research.html">Research</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="snapTo('footer-sec');return false;">Get in Touch</a>
+</nav>
+
+<div id="dots"></div>
+
+<div id="page">
+
+  <!-- HERO -->
+  <section class="snap" id="hero">
+    <div class="hero-bg c1"></div>
+    <div class="hero-bg c2"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;">
+      <span class="eyebrow-tag ri" data-delay="1">Photonic Neural Networks</span>
+      <h1 class="ri" data-delay="2">AI at the<br/><span class="grad">Speed of Light.</span></h1>
+      <p class="sub ri" data-delay="3">Levu builds photonic integrated circuits that run neural network training entirely in the optical domain — no electrons, no heat, no limits.</p>
+      <div class="btns ri" data-delay="4">
+        <a href="architecture.html" class="btn-p">Explore Architecture</a>
+        <a href="research.html" class="btn-g">Our Research</a>
+      </div>
+    </div>
+    <div class="scroll-hint">↓ scroll</div>
+    <div class="hero-stats">
+      <div class="hs-item ri" data-delay="5"><div class="hs-num">1,000×</div><div class="hs-label">Faster than GPU</div></div>
+      <div class="hs-item ri" data-delay="5"><div class="hs-num">100×</div><div class="hs-label">Lower Power</div></div>
+      <div class="hs-item ri" data-delay="5"><div class="hs-num">0 J</div><div class="hs-label">Resistive Heat</div></div>
+      <div class="hs-item ri" data-delay="5"><div class="hs-num">Any Fab</div><div class="hs-label">Standard Si Photonics</div></div>
+    </div>
+  </section>
+
+  <!-- COMPUTE -->
+  <div id="compute-wrapper" class="snap">
+    <div id="cs-panel">
+      <div class="cs-ey ri">Compute Breakdown</div>
+      <h2 class="ri" data-delay="1">Levu accelerates <span class="grad">every phase</span></h2>
+      <div id="sp-wrap" class="ri" data-delay="2"><span id="sp-num">1×</span><span id="sp-lab">faster than GPU</span></div>
+      <div id="cs-leg" class="ri" data-delay="2">
+        <div class="leg"><div class="leg-dot" style="background:#1db954"></div><span class="leg-txt">Forward Pass</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#0ea5e9"></div><span class="leg-txt">Backward Pass</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#f59e0b"></div><span class="leg-txt">Weight Update</span></div>
+      </div>
+      <div id="bar-outer" class="ri" data-delay="3">
+        <div id="cs-bar">
+          <div class="bs" id="bs0" style="background:#1db954"><span class="bs-lbl" style="color:#fff">Matrix Multiply</span></div>
+          <div class="bs" id="bs1" style="background:#25d162"><span class="bs-lbl" style="color:#fff">Activations</span></div>
+          <div class="bs" id="bs2" style="background:#6ee89a"><span class="bs-lbl" style="color:#0a1a0d">Memory</span></div>
+          <div class="bs" id="bs3" style="background:#0ea5e9"><span class="bs-lbl" style="color:#fff">Matrix Multiply</span></div>
+          <div class="bs" id="bs4" style="background:#38bdf8"><span class="bs-lbl" style="color:#0a1a0d">Activations</span></div>
+          <div class="bs" id="bs5" style="background:#7dd3fc"><span class="bs-lbl" style="color:#0a1a0d">Memory</span></div>
+          <div class="bs" id="bs6" style="background:#f59e0b"><span class="bs-lbl" style="color:#0a1a0d">Updates</span></div>
+          <div class="bs" id="bs7" style="background:#fcd34d"><span class="bs-lbl" style="color:#0a1a0d">Memory</span></div>
+        </div>
+      </div>
+      <div id="cs-pct" class="ri" data-delay="3">
+        <div class="pc" id="pc0"><span>15%</span></div>
+        <div class="pc" id="pc1"><span>7%</span></div>
+        <div class="pc" id="pc2"><span>8%</span></div>
+        <div class="pc" id="pc3"><span>30%</span></div>
+        <div class="pc" id="pc4"><span>7%</span></div>
+        <div class="pc" id="pc5"><span>15%</span></div>
+        <div class="pc" id="pc6"><span>5%</span></div>
+        <div class="pc" id="pc7"><span>13%</span></div>
+      </div>
+      <div id="cs-explain" class="ri" data-delay="4">
+        <div id="ex-bar" style="background:#1db954"></div>
+        <div>
+          <div id="ex-phase" style="color:#1db954">Forward Pass</div>
+          <div id="ex-title">Matrix multiply — gone.</div>
+          <div id="ex-body">On a GPU, every layer burns through thousands of multiply-accumulate units one clock cycle at a time. Levu uses fully reversible nonlinear optical interactions — light mixing with light — to compute the same transformation in a single physical pass. No switching, no clock, no digital arithmetic. Because the interactions are reversible, the backward pass runs through the same hardware in reverse at no extra cost.</div>
+        </div>
+      </div>
+      <div id="cs-steps" class="ri" data-delay="5">swipe ↓</div>
+      <div id="cs-prog"></div>
+    </div>
+  </div>
+
+  <!-- WHAT WE BUILD -->
+  <section class="snap" id="build">
+    <div class="build-inner" style="position:relative;z-index:1;">
+      <div class="sl ri">What We Build</div>
+      <h2 class="st ri" data-delay="1">A Neural Network That Runs on Light</h2>
+      <p class="sb ri" data-delay="2">Levu's photonic integrated circuits perform matrix multiplication, nonlinear activation, and layer-to-layer propagation entirely in the optical domain — with power consumption orders of magnitude below conventional silicon.</p>
+      <div class="cg">
+        <div class="card ri" data-delay="3"><div class="card-glow"></div><div class="cn">01</div><div class="ct">Optical Matrix Multiply</div><p class="cb">Fully reversible nonlinear optical interactions compute any linear transformation in a single pass — no multiply-accumulate units needed.</p></div>
+        <div class="card ri" data-delay="4"><div class="card-glow"></div><div class="cn">02</div><div class="ct">Nonlinear Activation</div><p class="cb">The activation function emerges from the optical interactions themselves — no code, no digital logic, no extra hardware.</p></div>
+        <div class="card ri" data-delay="5"><div class="card-glow"></div><div class="cn">03</div><div class="ct">WDM Layer Stacking</div><p class="cb">Wavelength-division multiplexing runs multiple neural network layers on the same waveguide simultaneously — depth at zero additional cost.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY LEVU -->
+  <section class="snap" id="why">
+    <div class="two-col" style="position:relative;z-index:1;">
+      <div>
+        <div class="sl ri">Why Levu</div>
+        <h2 class="st ri" data-delay="1">Light Does What Silicon Cannot</h2>
+        <p class="ri" data-delay="2">Every conventional AI chip is bottlenecked by the same physics: electrons moving through resistive material generate heat, consume power, and max out bandwidth. Scaling means more chips, more cooling, more energy.</p>
+        <p class="ri" data-delay="3">Photons carry no charge. They don't generate heat when they compute. A single waveguide carries hundreds of independent wavelength channels simultaneously.</p>
+        <p class="ri" data-delay="4">Our fully reversible nonlinear optical platform is the first to bring true end-to-end optical training — forward and backward passes in the same hardware — to a manufacturable silicon photonics process.</p>
+        <div class="ri" data-delay="5" style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;">
+          <a href="architecture.html" class="btn-p">See the Architecture</a>
+          <a href="fabrication.html" class="btn-g">How We Fab It</a>
+        </div>
+      </div>
+      <div class="mini-cg">
+        <div class="mini-card ri" data-delay="2"><div class="ct">No Heat</div><p class="cb">Photonic compute eliminates resistive switching losses entirely</p></div>
+        <div class="mini-card ri" data-delay="3"><div class="ct">No Conversion</div><p class="cb">Input to output stays optical — no DAC/ADC bottleneck between layers</p></div>
+        <div class="mini-card ri" data-delay="4"><div class="ct">Edge-Ready</div><p class="cb">Low power enables deployment anywhere — no data center required</p></div>
+        <div class="mini-card ri" data-delay="5"><div class="ct">Foundry Scale</div><p class="cb">Designed for standard silicon photonics fabs — no exotic processes</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER / CONTACT -->
+  <section class="snap" id="footer-sec">
+    <div class="ctc-inner">
+      <div class="ctc-wrap">
+        <div class="ri"><span class="ctc-eyebrow">Get in Touch</span></div>
+        <h2 class="ctc-h ri" data-delay="1">Let's build something<br/><span class="ctc-ac">that matters.</span></h2>
+        <p class="ctc-sub ri" data-delay="2">Whether you're an investor, looking to join the team, or just curious about the technology — we'd love to hear from you.</p>
+        <div class="ctc-grid ri" data-delay="3">
+          <div class="ctc-card">
+            <div class="ctc-tag">Investors</div>
+            <div class="ctc-card-title">Back the Vision</div>
+            <p class="ctc-card-body">All-optical computing is the next paradigm shift in AI hardware. If you see the potential, let's talk about what we're building.</p>
+          </div>
+          <div class="ctc-card">
+            <div class="ctc-tag">Careers</div>
+            <div class="ctc-card-title">Join the Team</div>
+            <p class="ctc-card-body">We're looking for motivated engineers, physicists, and builders ready to work on the hardest problems in photonics.</p>
+          </div>
+          <div class="ctc-card">
+            <div class="ctc-tag">Explore</div>
+            <div class="ctc-card-title">Learn the Physics</div>
+            <p class="ctc-card-body">Curious about how optical neural networks actually work? We love explaining the physics. No question is too simple.</p>
+          </div>
+        </div>
+        <div class="ri" data-delay="4">
+          <a href="mailto:contact.levu@proton.me" class="ctc-email-link">contact.levu@proton.me</a>
+        </div>
+      </div>
+    </div>
+    <div class="ctc-bar ri" data-delay="5">
+      <div class="ctc-logo">Lev<span>u</span></div>
+      <div class="ctc-nav">
+        <a href="#">Levu</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="fabrication.html">Fabrication</a>
+        <a href="research.html">Research</a>
+      </div>
+      <div class="ctc-copy">&copy; 2026 Levu. All rights reserved.</div>
+    </div>
+  </section>
+
+</div><!-- end #page -->
+
+<script>
+var PAGES = ['hero','compute-wrapper','build','why','footer-sec'];
+var page  = document.getElementById('page');
+var cur   = 0;   // current page index
+var busy  = false; // locked while animating
+
+// ── DOTS ──
+var dotsEl = document.getElementById('dots');
+PAGES.forEach(function(id){
+  var d = document.createElement('div');
+  d.className = 'dot';
+  d.setAttribute('data-id', id);
+  d.addEventListener('click', function(){ gotoIdx(PAGES.indexOf(id)); });
+  dotsEl.appendChild(d);
+});
+function updateDots(id){
+  document.querySelectorAll('.dot').forEach(function(d){
+    d.classList.toggle('active', d.getAttribute('data-id') === id);
+  });
+}
+
+// ── PAGE NAVIGATION ──
+// All navigation goes through here — CSS snap removed so this is the single source of truth.
+function gotoIdx(idx, instant){
+  if(idx < 0 || idx >= PAGES.length) return;
+  var prevIdx = cur;
+  cur = idx;
+
+  // Reset .entered on the section we're leaving so it re-animates on re-entry
+  document.getElementById(PAGES[prevIdx]).classList.remove('entered');
+
+  var el = document.getElementById(PAGES[idx]);
+  // Scroll to exact offsetTop — never leaves us between pages
+  if(instant){
+    page.scrollTop = el.offsetTop;
+  } else {
+    page.scrollTo({top: el.offsetTop, behavior:'smooth'});
+  }
+
+  // Trigger fade-in after a tiny delay so the transition fires
+  setTimeout(function(){ el.classList.add('entered'); }, 40);
+  updateDots(PAGES[idx]);
+
+  // Reset compute step on entry
+  if(PAGES[idx] === 'compute-wrapper' && window._cs){
+    window._cs._lastGroup = -1; // force text refresh
+    window._cs.go(prevIdx < idx ? 0 : window._cs.total);
+  }
+
+  busy = true;
+  setTimeout(function(){ busy = false; }, 900);
+}
+window.snapTo = function(id){ gotoIdx(PAGES.indexOf(id)); };
+
+// Init: hero is page 0, visible immediately
+document.getElementById('hero').classList.add('entered');
+updateDots('hero');
+
+// ── SCROLLBAR: snap to nearest page when the user drags the scrollbar ──
+var snapTimer;
+page.addEventListener('scroll', function(){
+  document.getElementById('navbar').classList.toggle('scrolled', page.scrollTop > 10);
+  // After scrolling stops, snap to the nearest page
+  clearTimeout(snapTimer);
+  snapTimer = setTimeout(function(){
+    if(busy) return;
+    var st = page.scrollTop;
+    var best = 0, bestDist = Infinity;
+    PAGES.forEach(function(id, i){
+      var dist = Math.abs(document.getElementById(id).offsetTop - st);
+      if(dist < bestDist){ bestDist = dist; best = i; }
+    });
+    // Only snap if we're meaningfully off a page boundary
+    if(bestDist > 8){ gotoIdx(best); }
+    else { cur = best; updateDots(PAGES[cur]); }
+  }, 120);
+}, {passive:true});
+
+// ── COMPUTE ANIMATION ──
+(function(){
+  var BASE = [15,7,8,30,7,15,5,13];
+  var TOTAL_PX = 720, MIN_PX = 2;
+  var fullPx = BASE.map(function(p){ return p/100*TOTAL_PX; });
+
+  var GROUPS = [
+    { segs:[0,3], color:'#1db954', phColor:'#1db954', phase:'Forward + Backward Pass',
+      title:'Matrix multiply \u2014 gone.',
+      body:'On a GPU, every layer burns through thousands of multiply-accumulate units one clock cycle at a time. Levu uses fully reversible nonlinear optical interactions \u2014 light mixing with light \u2014 to compute the same transformation in a single physical pass. No switching, no clock, no digital arithmetic. Because the interactions are reversible, the backward pass runs through the same hardware in reverse at no extra cost.' },
+    { segs:[1,4], color:'#25d162', phColor:'#1db954', phase:'Forward + Backward Pass',
+      title:'Activations \u2014 computed in the optical domain.',
+      body:'ReLU, GELU, Softmax \u2014 on a GPU these are element-wise loops over millions of values. Levu\u2019s nonlinear optical interactions naturally produce curved, nonlinear responses as light propagates through the chip \u2014 the activation function emerges from the physics, not from code. Gradients flow back through the same reversible process automatically.' },
+    { segs:[2,5,7], color:'#7dd3fc', phColor:'#0ea5e9', phase:'Forward + Backward Pass',
+      title:'Memory traffic \u2014 eliminated.',
+      body:'GPUs write every layer\u2019s activations to DRAM and read them back during backprop \u2014 a bottleneck that often exceeds compute cost itself. Levu developed the world\u2019s fastest all-optical memory. No DRAM round-trips, no bus contention. The backward pass reads the same optical state written during the forward pass \u2014 zero extra data movement.' },
+    { segs:[6], color:'#f59e0b', phColor:'#f59e0b', phase:'Optimizer',
+      title:'Weight updates \u2014 written in light.',
+      body:'Adam and SGD loop scalar multiply-adds over billions of parameters and write them all back to DRAM. On Levu, weights are encoded in the state of the optical interactions themselves. Optimizer steps translate directly into light pulses that reconfigure those interactions in place \u2014 no arithmetic loop, no memory transaction.' }
+  ];
+
+  var TOTAL_STEPS = GROUPS.length;
+  var collapsed   = BASE.map(function(){ return false; });
+  var PER_GROUP   = Math.pow(1000, 0.25);
+  var lastGroup   = -1;
+  var computeStep = 0;
+
+  var spNum   = document.getElementById('sp-num');
+  var stepsEl = document.getElementById('cs-steps');
+  var exBar   = document.getElementById('ex-bar');
+  var exPh    = document.getElementById('ex-phase');
+  var exTi    = document.getElementById('ex-title');
+  var exBo    = document.getElementById('ex-body');
+  var progEl  = document.getElementById('cs-prog');
+
+  function render(activeGroup, nCollapsed){
+    var px = fullPx.map(function(w,i){ return collapsed[i] ? MIN_PX : w; });
+    px.forEach(function(w,i){
+      var b = document.getElementById('bs'+i), p = document.getElementById('pc'+i);
+      b.style.width = w+'px';
+      b.querySelector('.bs-lbl').style.opacity = w > 20 ? '1' : '0';
+      p.style.width = w+'px';
+      p.querySelector('span').textContent = w > 18 ? BASE[i]+'%' : '';
+    });
+    BASE.forEach(function(_,i){
+      var b = document.getElementById('bs'+i);
+      var active = GROUPS[activeGroup].segs.indexOf(i) !== -1;
+      b.style.opacity = collapsed[i] ? '0.15' : (active ? '1' : '0.5');
+    });
+    var sp = Math.pow(PER_GROUP, nCollapsed);
+    spNum.textContent = sp >= 999 ? '1,000\u00d7' : sp >= 10 ? Math.round(sp)+'\u00d7' : sp.toFixed(1)+'\u00d7';
+    progEl.style.width = (nCollapsed / TOTAL_STEPS * 100)+'%';
+    if(nCollapsed === 0)           stepsEl.textContent = 'swipe \u2193';
+    else if(nCollapsed === TOTAL_STEPS) stepsEl.textContent = 'swipe \u2193 to continue';
+    else                           stepsEl.textContent = nCollapsed + '\u202f/\u202f' + TOTAL_STEPS + ' optimised';
+  }
+
+  function showGroup(g){
+    if(g === lastGroup) return;
+    lastGroup = g;
+    var grp = GROUPS[g];
+    exTi.style.opacity = '0'; exBo.style.opacity = '0';
+    setTimeout(function(){
+      exBar.style.background = grp.color;
+      exPh.style.color = grp.phColor; exPh.textContent = grp.phase;
+      exTi.textContent = grp.title;  exBo.textContent = grp.body;
+      exTi.style.opacity = '1'; exBo.style.opacity = '1';
+    }, 160);
+  }
+
+  function setStep(step){
+    step = Math.max(0, Math.min(TOTAL_STEPS, step));
+    computeStep = step;
+    for(var i = 0; i < GROUPS.length; i++){
+      GROUPS[i].segs.forEach(function(idx){ collapsed[idx] = i < step; });
+    }
+    render(Math.min(step, TOTAL_STEPS - 1), step);
+    showGroup(Math.min(step, TOTAL_STEPS - 1));
+  }
+
+  setStep(0);
+  window._cs = {
+    step: function(){ return computeStep; },
+    total: TOTAL_STEPS,
+    go: setStep,
+    _lastGroup: -1  // accessible for reset by gotoIdx
+  };
+  // Keep lastGroup in sync with _cs._lastGroup
+  var _origShowGroup = showGroup;
+  showGroup = function(g){
+    window._cs._lastGroup = g;
+    _origShowGroup(g);
+  };
+
+})(); // end compute IIFE
+
+// ── UNIFIED WHEEL / TOUCH / KEYBOARD HANDLER ──
+// Every gesture does exactly one thing: advance a compute step OR flip to the next page.
+// `busy` flag prevents any accumulation or drift — the same effort always = one action.
+
+function handleNav(dir){
+  if(busy) return;
+  if(PAGES[cur] === 'compute-wrapper' && window._cs){
+    var cs = window._cs;
+    if(dir > 0){
+      if(cs.step() < cs.total){ cs.go(cs.step() + 1); busy = true; setTimeout(function(){ busy = false; }, 800); }
+      else { gotoIdx(cur + 1); }
+    } else {
+      if(cs.step() > 0){ cs.go(cs.step() - 1); busy = true; setTimeout(function(){ busy = false; }, 800); }
+      else { gotoIdx(cur - 1); }
+    }
+  } else {
+    gotoIdx(cur + dir);
+  }
+}
+
+// Wheel
+page.addEventListener('wheel', function(e){
+  e.preventDefault();
+  if(Math.abs(e.deltaY) < 8) return; // ignore tiny trackpad nudges
+  handleNav(e.deltaY > 0 ? 1 : -1);
+}, {passive:false});
+
+// Touch
+var touchStartY = 0;
+page.addEventListener('touchstart', function(e){ touchStartY = e.touches[0].clientY; }, {passive:true});
+page.addEventListener('touchend', function(e){
+  var dy = touchStartY - e.changedTouches[0].clientY;
+  if(Math.abs(dy) < 40) return;
+  handleNav(dy > 0 ? 1 : -1);
+}, {passive:false});
+
+// Keyboard
+document.addEventListener('keydown', function(e){
+  if(!/Arrow(Down|Up)|Page(Down|Up)/.test(e.key)) return;
+  e.preventDefault();
+  handleNav((e.key === 'ArrowDown' || e.key === 'PageDown') ? 1 : -1);
+});
+</script>
+</body>
+</html>
